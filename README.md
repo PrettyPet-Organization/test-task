@@ -2,7 +2,7 @@
   <img width="400" height="350" src="https://github.com/PrettyPet-Organization/test-task/blob/main/LQSPT.gif">
 </p>
 <h1 align="center">
-  Приветсвую тебя на тестовом задании! <a href="https://www.youtube.com/channel/UCaW0RNRwMILFdRM3-EpUYjg" target="_blank"></a> 
+  Приветствую тебя на тестовом задании! <a href="https://www.youtube.com/channel/UCaW0RNRwMILFdRM3-EpUYjg" target="_blank"></a> 
   <img src="https://github.com/blackcater/blackcater/raw/main/images/Hi.gif" height="32"/>
 </h1>
 
@@ -19,7 +19,7 @@
 
 ## Где мои практические работы? 🔭
 
-В папке task. В ней выбери директорию в зависимости от своей роли.
+В папке tasks. В ней выбери директорию в зависимости от своей роли.
 
 ## Как сдавать практическую работу? ☑️
 
