@@ -4,11 +4,7 @@ from .models import Product
 
 
 class UserSerializers(serializers.HyperlinkedModelSerializer):
-    """Представление списков пользователей
-            model = User
-
-
-    """
+    """Представление списков пользователей"""
     class Meta:
         model = User
         fields = [
@@ -17,10 +13,7 @@ class UserSerializers(serializers.HyperlinkedModelSerializer):
 
 
 class ProductSerializers(serializers.ModelSerializer):
-    """Представление списков товаров
-            model = Item
-
-    """
+    """Представление списков товаров"""
     class Meta:
         model = Product
         fields = ['id', 'name', 'price', 'count']
