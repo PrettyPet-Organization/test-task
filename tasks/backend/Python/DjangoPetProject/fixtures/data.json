@@ -1,0 +1,20 @@
+[
+  {
+    "model": "API.product",
+    "pk": 1,
+    "fields": {
+      "name": "Шаверма",
+      "price": 200.0,
+      "count": 30
+    }
+  },
+  {
+    "model": "API.product",
+    "pk": 2,
+    "fields": {
+      "name": "Пиво",
+      "price": 70.0,
+      "count": 100
+    }
+  }
+]
