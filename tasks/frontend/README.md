@@ -66,8 +66,7 @@ export default App;
 
 
 
-
-<h1 align="center">
 3. Написать любой компонент выпадающего списка. 
+<h1 align="center">
   Удачи! <a href="https://www.youtube.com/channel/UCaW0RNRwMILFdRM3-EpUYjg" target="_blank">😉</a> 
 </h1>
