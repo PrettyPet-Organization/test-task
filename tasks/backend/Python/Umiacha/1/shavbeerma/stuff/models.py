@@ -2,8 +2,8 @@ from django.db import models
 
 
 class Ingredient(models.Model):
-    name = models.CharField(verbose_name='Название')
-    measurement_unit = models.CharField(verbose_name='Единицы измерения')
+    name = models.CharField(max_length=200, verbose_name='Название')
+    measurement_unit = models.CharField(max_length=200, verbose_name='Единицы измерения')
     
     class Meta:
         verbose_name = 'Ингредиент'
@@ -14,12 +14,12 @@ class Ingredient(models.Model):
 
 
 class Beer(models.Model):
-    name = models.CharField(verbose_name='Название')
-    sort = models.CharField(verbose_name='Сорт')
-    category = models.CharField(verbose_name='Категория')
+    name = models.CharField(max_length=200, verbose_name='Название')
+    sort = models.CharField(max_length=200, verbose_name='Сорт')
+    category = models.CharField(max_length=200, verbose_name='Категория')
     alcohol = models.IntegerField(verbose_name='Крепость')
     density = models.IntegerField(verbose_name='Плотность')
-    producer = models.CharField(verbose_name='Производитель')
+    producer = models.CharField(max_length=200, verbose_name='Производитель')
     price = models.IntegerField(verbose_name='Цена')
     
     class Meta:
@@ -31,7 +31,7 @@ class Beer(models.Model):
 
 
 class Shaurma(models.Model):
-    name = models.CharField(verbose_name='Название')
+    name = models.CharField(max_length=200, verbose_name='Название')
     ingredients = models.ManyToManyField(Ingredient, through='Recipe', verbose_name='Ингредиенты', through_fields=('shaurma', 'ingredient'))
     
     class Meta:

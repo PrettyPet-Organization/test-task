@@ -1,3 +1,22 @@
 from django.shortcuts import render
+from rest_framework.viewsets import ModelViewSet
 
-# Create your views here.
+from stuff.models import Beer, Shaurma
+
+from .paginators import StuffPagination
+
+# TODO: ??Написать сериализаторы для API
+# TODO: Вынести общее у написанных представлений в отдельный класс (DRY).
+class StuffViewSet(ModelViewSet):
+    """Базовый класс для товаров."""
+    pagination_class = StuffPagination
+
+
+class BeerViewSet(StuffViewSet):
+    queryset = Beer.objects.all()
+    http_method_names = ['get', ]
+
+
+class ShaurmaViewSet(StuffViewSet):
+    queryset = Shaurma.objects.all()
+    http_method_names = ['get', ]
