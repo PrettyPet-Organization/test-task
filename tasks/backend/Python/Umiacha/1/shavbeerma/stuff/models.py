@@ -14,7 +14,7 @@ class Ingredient(models.Model):
 
 
 class Beer(models.Model):
-    name = models.CharField(max_length=200, verbose_name='Название')
+    name = models.CharField(max_length=200, unique=True, verbose_name='Название')
     sort = models.CharField(max_length=200, verbose_name='Сорт')
     category = models.CharField(max_length=200, verbose_name='Категория')
     alcohol = models.IntegerField(verbose_name='Крепость')
@@ -31,7 +31,7 @@ class Beer(models.Model):
 
 
 class Shaurma(models.Model):
-    name = models.CharField(max_length=200, verbose_name='Название')
+    name = models.CharField(max_length=200, unique=True, verbose_name='Название')
     ingredients = models.ManyToManyField(
         Ingredient,
         through='Recipe',

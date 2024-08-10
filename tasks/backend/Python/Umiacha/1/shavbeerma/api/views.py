@@ -4,6 +4,7 @@ from rest_framework.viewsets import ModelViewSet
 from stuff.models import Beer, Shaurma
 
 from .paginators import StuffPagination
+from .serializers import BeerSerializer, ShaurmaSerializer
 
 # TODO: ??Написать сериализаторы для API
 class StuffViewSet(ModelViewSet):
@@ -14,8 +15,10 @@ class StuffViewSet(ModelViewSet):
 class BeerViewSet(StuffViewSet):
     queryset = Beer.objects.all()
     http_method_names = ['get', ]
+    serializer_class = BeerSerializer
 
 
 class ShaurmaViewSet(StuffViewSet):
     queryset = Shaurma.objects.all()
     http_method_names = ['get', ]
+    serializer_class = ShaurmaSerializer
