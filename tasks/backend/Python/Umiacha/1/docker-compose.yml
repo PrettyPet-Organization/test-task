@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  shop_backend:
+    build: ./shavbeerma/
+    env_file: .env
+    ports:
+      - "8000:8000"

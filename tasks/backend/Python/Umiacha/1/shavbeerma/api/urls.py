@@ -7,9 +7,9 @@ from .views import BeerViewSet, ShaurmaViewSet
 API_VERSION = 'v1'
 
 router = DefaultRouter()
-router.register('beer/', BeerViewSet)
-router.register('shaurma/', ShaurmaViewSet)
+router.register('beer', BeerViewSet)
+router.register('shaurma', ShaurmaViewSet)
 
 urlpatterns = [
-    path(f'{API_VERSION}', include(router.urls)),
+    path(f'{API_VERSION}/', include(router.urls)),  # TODO: проверить, что запросы корректно обрабатываются.
 ]

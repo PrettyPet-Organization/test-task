@@ -6,7 +6,6 @@ from stuff.models import Beer, Shaurma
 from .paginators import StuffPagination
 
 # TODO: ??Написать сериализаторы для API
-# TODO: Вынести общее у написанных представлений в отдельный класс (DRY).
 class StuffViewSet(ModelViewSet):
     """Базовый класс для товаров."""
     pagination_class = StuffPagination

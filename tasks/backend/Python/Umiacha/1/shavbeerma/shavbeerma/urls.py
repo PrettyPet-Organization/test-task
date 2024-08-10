@@ -4,7 +4,7 @@ from django.urls import path, include
 # TODO: сгенерировать документацию и прикрутить её в режиме дебага.
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('api/', include('api.urls')),  # TODO: составить эндпоинты для API.
+    path('api/', include('api.urls')),
 ]
 
 # if settings.DEBUG:  # Вариант раздачи статики для дебага.

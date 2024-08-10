@@ -32,7 +32,12 @@ class Beer(models.Model):
 
 class Shaurma(models.Model):
     name = models.CharField(max_length=200, verbose_name='Название')
-    ingredients = models.ManyToManyField(Ingredient, through='Recipe', verbose_name='Ингредиенты', through_fields=('shaurma', 'ingredient'))
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        through='Recipe',
+        verbose_name='Ингредиенты',
+        through_fields=('shaurma', 'ingredient'),
+    )
     
     class Meta:
         verbose_name = 'Шаурма'
