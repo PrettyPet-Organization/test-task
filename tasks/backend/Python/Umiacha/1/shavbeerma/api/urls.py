@@ -11,5 +11,5 @@ router.register('beer', BeerViewSet)
 router.register('shaurma', ShaurmaViewSet)
 
 urlpatterns = [
-    path(f'{API_VERSION}/', include(router.urls)),  # TODO: проверить, что запросы корректно обрабатываются.
+    path(f'{API_VERSION}/', include(router.urls)),
 ]

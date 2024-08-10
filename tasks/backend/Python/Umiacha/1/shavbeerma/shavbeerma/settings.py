@@ -32,7 +32,7 @@ ALLOWED_HOSTS = json.loads(os.getenv('DJANGO_HOSTS', '["localhost", "127.0.0.1"]
 
 # Application definition
 
-# AUTH_USER_MODEL = 'uses.User'  # TODO: сделать приложение с пользователями и написать модель пользователя.
+AUTH_USER_MODEL = 'users.CustomUser'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 
     'api',
     'stuff',
+    'users',
 ]
 
 MIDDLEWARE = [

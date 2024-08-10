@@ -1,4 +1,3 @@
-# TODO: строить на образе python 3.10.12
 FROM python:3.10
 
 WORKDIR app/

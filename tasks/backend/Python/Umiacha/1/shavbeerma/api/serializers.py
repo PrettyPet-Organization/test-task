@@ -1,4 +1,3 @@
-# TODO: написать сериализаторы.
 from rest_framework import serializers
 
 from stuff.models import Beer, Shaurma, Ingredient, Recipe

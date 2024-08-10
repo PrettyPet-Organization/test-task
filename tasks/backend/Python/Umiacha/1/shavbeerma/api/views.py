@@ -6,7 +6,7 @@ from stuff.models import Beer, Shaurma
 from .paginators import StuffPagination
 from .serializers import BeerSerializer, ShaurmaSerializer
 
-# TODO: ??Написать сериализаторы для API
+
 class StuffViewSet(ModelViewSet):
     """Базовый класс для товаров."""
     pagination_class = StuffPagination
