@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+    container_name: doner_shop_django
+    volumes:
+      - .:/app:z
+    ports:
+      - '8001:8001'
+    command: /start
