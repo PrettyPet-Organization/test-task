@@ -1,0 +1,86 @@
+.custom-select {
+  position: relative;
+  min-width: 100px;
+  width: fit-content;
+}
+
+.custom-select__field {
+  background-color: #ffffff;
+  border: 1px solid #0000ff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.custom-select_field__option-label {
+  font-size: 18px;
+}
+
+.option-label {
+  font-family: "Roboto Slab";
+}
+
+.custom-select__field__arrow {
+  margin-left: 15px;
+}
+
+.arrow {
+  width: 5px;
+  height: 5px;
+  border-right: 2px solid #333333;
+  border-bottom: 2px solid #333333;
+  transform: rotate(45deg);
+  transition: transform 0.4s ease;
+}
+
+.arrow.open {
+  transform: rotate(-135deg);
+}
+
+.custom-select__dropdown-list {
+  background-color: #ffffff;
+  border: 1px solid #0000ff;
+}
+
+.dropdown-list {
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+  padding: 0;
+  list-style: none;
+  margin-top: 4px;
+  border-radius: 5px;
+  max-height: 0;
+  overflow-y: hidden;
+  transition: max-height 0.5s ease-in-out, opacity 0.6s ease-in-out;
+  opacity: 0;
+}
+
+.dropdown-list.open {
+  max-height: 200px;
+  opacity: 1;
+}
+
+.dropdown-list.open::after {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown-list__list-item {
+  font-size: 16px;
+}
+
+.list-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, fontSize 0.2 ease;
+}
+
+.list-item:hover {
+  background-color: #f0f0f0;
+  font-size: 18px;
+}
