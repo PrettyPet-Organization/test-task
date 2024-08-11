@@ -1,10 +1,12 @@
 from django.db import models
 
 
-# TODO: прописать ограничения значений IntegerField.
+
 class Ingredient(models.Model):
     name = models.CharField(max_length=200, verbose_name='Название')
-    measurement_unit = models.CharField(max_length=200, verbose_name='Единицы измерения')
+    measurement_unit = models.CharField(
+        max_length=200, verbose_name='Единицы измерения'
+    )
     
     class Meta:
         verbose_name = 'Ингредиент'
@@ -15,7 +17,9 @@ class Ingredient(models.Model):
 
 
 class Beer(models.Model):
-    name = models.CharField(max_length=200, unique=True, verbose_name='Название')
+    name = models.CharField(
+        max_length=200, unique=True, verbose_name='Название'
+    )
     sort = models.CharField(max_length=200, verbose_name='Сорт')
     category = models.CharField(max_length=200, verbose_name='Категория')
     alcohol = models.IntegerField(verbose_name='Крепость')
@@ -32,7 +36,9 @@ class Beer(models.Model):
 
 
 class Shaurma(models.Model):
-    name = models.CharField(max_length=200, unique=True, verbose_name='Название')
+    name = models.CharField(
+        max_length=200, unique=True, verbose_name='Название'
+    )
     ingredients = models.ManyToManyField(
         Ingredient,
         through='Recipe',
@@ -49,8 +55,12 @@ class Shaurma(models.Model):
 
 
 class Recipe(models.Model):
-    shaurma = models.ForeignKey(Shaurma, verbose_name='Шаурма', on_delete=models.CASCADE)
-    ingredient = models.ForeignKey(Ingredient, verbose_name='Ингредиент', on_delete=models.CASCADE)
+    shaurma = models.ForeignKey(
+        Shaurma, verbose_name='Шаурма', on_delete=models.CASCADE
+    )
+    ingredient = models.ForeignKey(
+        Ingredient, verbose_name='Ингредиент', on_delete=models.CASCADE
+    )
     amount = models.IntegerField(verbose_name='Количество ингредиента')
     
     class Meta:
