@@ -30,6 +30,10 @@ func (s *GoodsService) GetGood(key string) (model.Good, error) {
 	return s.repo.Get(key)
 }
 
+func (s *GoodsService) GetGoodsCount() int {
+	return s.repo.Count()
+}
+
 func (s *GoodsService) CreateOrUpdateGood(t model.Good) error {
 	s.repo.Put(t)
 	return nil

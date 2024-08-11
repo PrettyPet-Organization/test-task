@@ -48,6 +48,7 @@ func run() error {
 		w.Write([]byte("Людские товары, складской магазин. Аниме девочки на вывоз"))
 	})
 	r.Get("/goods", goodsHandler.GetGoods)
+	r.Get("/goods/count", goodsHandler.GetGoodsCount)
 	r.Get("/good/{id}", goodsHandler.GetGood)
 	r.Post("/rand/good", goodsHandler.CreateRandomGood)
 

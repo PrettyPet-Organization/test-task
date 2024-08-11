@@ -14,7 +14,7 @@ type GoodsService interface {
 	GetGood(key string) (model.Good, error)
 	GetGoods() []model.Good
 	CreateOrUpdateGood(t model.Good) error
-	CountGoods() int
+	GetGoodsCount() int
 }
 
 type Handler struct {
@@ -99,9 +99,23 @@ func (h *Handler) GetGoods(w http.ResponseWriter, r *http.Request) {
 	w.Write(byt)
 }
 
+func (h *Handler) GetGoodsCount(w http.ResponseWriter, r *http.Request) {
+	v := h.serv.GetGoodsCount()
+
+	b, err := json.Marshal(v)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(b)
+}
+
 func (h *Handler) CreateRandomGood(w http.ResponseWriter, r *http.Request) {
-	typ := ""
-	category := ""
+	q := r.URL.Query()
+
+	typ := q.Get("typ")
+	category := q.Get("category")
 
 	model := model.NewGood(typ, category)
 	err := h.serv.CreateOrUpdateGood(*model)
