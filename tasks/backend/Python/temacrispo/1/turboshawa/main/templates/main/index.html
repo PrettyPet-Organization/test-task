@@ -1,0 +1,22 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+
+
+{% block pagename %}
+    {{ pagename }}
+{% endblock pagename %}
+
+
+{% block css_footer %}
+    <link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
+{% endblock css_footer %}
+
+
+{% block footer %}
+    <footer class="py-4 bg-dark">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; Artem Babitski 2024</p>
+        </div>
+    </footer>
+{% endblock footer %}
