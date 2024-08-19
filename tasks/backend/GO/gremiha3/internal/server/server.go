@@ -100,6 +100,7 @@ func NewServer() *Server {
 
 	// Маршруты для regular
 	authorized.GET("/user/:id", userHandler.GetUser)
+	// authorized.GET("/user/:id", userHandler.GetUser)
 	// openRouter.GET("/:id", orderHandler.GetOrderByID)
 	// openRouter.GET("/list", orderHandler.GetAllOrdersList)
 	// openRouter.GET("/bypatient/:patient_id/:is_active", orderHandler.GetOrdersByPatientID)
