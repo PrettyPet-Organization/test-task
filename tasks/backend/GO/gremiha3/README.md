@@ -177,3 +177,28 @@ func main(){
 10. На Go не пишут библиотек для работы с другими языками программирования, потому что Go - это прежде всего язык для разработки серверных приложений. Он используется для разработки инфраструктурных проектов. Для связи с другими объектами, приложения написанные на Go, обычно используют REST api интерфейс. Он достаточно надежен, быстр, прост и универсален. 
 
 [⬆️ Вернуться к оглавлению](#вопросы)
+
+
+## Примеры запросов:
+### Регистрация:
+```
+http --verify=no POST https://localhost:8443/user/register login=qwerty@ya.com password=123456 username=Nikola role=super
+```
+### Авторизация:
+```
+http --verify=no POST https://localhost:8443/user/login login=qwerty@ya.com password=123456
+```
+### Вывести список всех пользователей:
+```
+http --verify=no GET https://localhost:8443/users Authorization:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQwNDc2NTcsImxvZ2luIjoicXdlcnR5QHlhLmNvbSIsInJvbGUiOiJzdXBlciJ9.gLvjroKKz2FQrdDAt-SzaXMLTICl0s90VuRHC4wu6zo"
+```
+### Из браузера:
+```
+fetch(
+  'https://localhost:8443/users',
+  {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json','Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQwNDY4NTYsImxvZ2luIjoiY21kQGNtZC5ydSIsInJvbGUiOiJzdXBlciJ9.Lz1tIHXDiSJQy6JspvFRSCCsGoNSFOg2S0SIzhTg_yk' }
+  }
+).then(resp => resp.text()).then(console.log)
+```

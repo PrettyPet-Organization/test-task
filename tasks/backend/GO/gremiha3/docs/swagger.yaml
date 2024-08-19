@@ -1,0 +1,149 @@
+definitions:
+  model.AddUser:
+    properties:
+      login:
+        example: cmd@cmd.ru
+        type: string
+      password:
+        example: "123456"
+        type: string
+      role:
+        example: super
+        type: string
+    type: object
+  model.LoginUser:
+    properties:
+      login:
+        example: cmd@cmd.ru
+        type: string
+      password:
+        example: "123456"
+        type: string
+    type: object
+  model.User:
+    properties:
+      id:
+        type: integer
+      login:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      token:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: An Shop service API in Go using Gin framework
+  title: Shop Service API
+  version: "1.0"
+paths:
+  /user/{user_id}:
+    get:
+      description: Return user with "id" number.
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get user by user id.
+      tags:
+      - user
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: Returns the authorization status
+      parameters:
+      - description: 'Login user. Логин указывается в формате электронной почты. Пароль
+          не меньше 6 символов. Роль: super или regular'
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Logged in
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Login user by login=email/password.
+      tags:
+      - Auth
+  /user/register:
+    post:
+      description: Save register data of user in Repo.
+      parameters:
+      - description: 'Create user. Логин указывается в формате электронной почты.
+          Пароль не меньше 6 символов. Роль: super или regular'
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.AddUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Register user
+      tags:
+      - user
+  /users:
+    get:
+      description: Return users list.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get all users.
+      tags:
+      - user
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
