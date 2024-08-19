@@ -3,7 +3,6 @@ package inmemory
 import (
 	"context"
 	"errors"
-	"fmt"
 	"sync"
 
 	"github.com/KozlovNikolai/test-task/internal/model"
@@ -42,10 +41,10 @@ func (i *UserRepository) Create(ctx context.Context, user model.User) (int, erro
 	user.ID = i.nextID
 	i.nextID++
 	i.users[user.ID] = user
-	msg := fmt.Sprintf("Created user : %v\n", user)
-	i.logger.Debug("CreateUser",
-		zap.String("info", msg),
-	)
+	// msg := fmt.Sprintf("Created user : %v\n", user)
+	// i.logger.Debug("CreateUser",
+	// 	zap.String("info", msg),
+	// )
 	return user.ID, nil
 }
 

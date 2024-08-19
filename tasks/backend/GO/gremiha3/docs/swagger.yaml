@@ -57,9 +57,11 @@ paths:
           description: Not Found
           schema:
             type: string
+      security:
+      - BearerAuth: []
       summary: Get user by user id.
       tags:
-      - user
+      - Auth
   /user/login:
     post:
       consumes:

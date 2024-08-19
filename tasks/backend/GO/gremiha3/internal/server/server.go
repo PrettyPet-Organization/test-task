@@ -85,16 +85,21 @@ func NewServer() *Server {
 	// add swagger
 	server.router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// CRUD маршруты для User
+	// Открытые маршруты
 	openRouter := server.router.Group("/user")
-	openRouter.GET("/:id", userHandler.GetUser)
+
 	openRouter.POST("/register", userHandler.CreateUser)
 	openRouter.POST("/login", userHandler.LoginUser)
 
+	// Закрытые маршруты
 	authorized := server.router.Group("/")
 	authorized.Use(middlewares.AuthMiddleware())
 
+	// Маршруты для super
 	authorized.GET("/users", userHandler.GetUsers)
+
+	// Маршруты для regular
+	authorized.GET("/user/:id", userHandler.GetUser)
 	// openRouter.GET("/:id", orderHandler.GetOrderByID)
 	// openRouter.GET("/list", orderHandler.GetAllOrdersList)
 	// openRouter.GET("/bypatient/:patient_id/:is_active", orderHandler.GetOrdersByPatientID)

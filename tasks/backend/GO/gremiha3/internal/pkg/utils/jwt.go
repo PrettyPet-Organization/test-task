@@ -9,36 +9,17 @@ import (
 
 // Claims is ...
 type Claims struct {
-	Login string `json:"login"`
+	AuthLogin string `json:"auth_login"`
+	AuthRole  string `json:"auth_role"`
 	jwt.RegisteredClaims
 }
 
 // GenerateJWT is ...
-// func GenerateJWT(user model.User) (string, time.Time, error) {
-// 	//TokenTimeDuration := 30 * time.Minute
-// 	// Create JWT token
-// 	expirationTime := time.Now().Add(config.Cfg.TokenTimeDuration)
-// 	//expirationTime := time.Now().Add(TokenTimeDuration)
-// 	claims := &Claims{
-// 		Login: user.Login,
-// 		RegisteredClaims: jwt.RegisteredClaims{
-// 			ExpiresAt: jwt.NewNumericDate(expirationTime),
-// 		},
-// 	}
-// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-// 	tokenString, err := token.SignedString(config.JwtKey)
-// 	if err != nil {
-// 		return "", time.Time{}, err
-// 	}
-// 	return tokenString, expirationTime, nil
-// }
-
-// GenerateJWT is ...
 func GenerateJWT(login, role string) (string, error) {
 	claims := jwt.MapClaims{
-		"login": login,
-		"role":  role,
-		"exp":   time.Now().Add(config.Cfg.TokenTimeDuration).Unix(),
+		"auth_login": login,
+		"auth_role":  role,
+		"exp":        time.Now().Add(config.Cfg.TokenTimeDuration).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

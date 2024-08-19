@@ -10,53 +10,10 @@ import (
 
 // Claims is ...
 type Claims struct {
-	Login string `json:"login"`
+	AuthLogin string `json:"auth_login"`
+	AuthRole  string `json:"auth_role"`
 	jwt.RegisteredClaims
 }
-
-// AuthMiddleware is ...
-// func AuthMiddleware() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		cookie, err := c.Request.Cookie("token")
-// 		fmt.Println("###########################")
-// 		fmt.Printf("cookie = %v\n", cookie.Value)
-// 		fmt.Println("###########################")
-// 		if err != nil {
-// 			if err == http.ErrNoCookie {
-// 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-// 				return
-// 			}
-// 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad request"})
-// 			return
-// 		}
-
-// 		// Parse JWT token
-// 		tknStr := cookie.Value
-// 		claims := &Claims{}
-// 		tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
-// 			return config.JwtKey, nil
-// 		})
-
-// 		if err != nil {
-// 			if err == jwt.ErrSignatureInvalid {
-// 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-// 				return
-// 			}
-// 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad request"})
-// 			return
-// 		}
-
-// 		if !tkn.Valid {
-// 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-// 			return
-// 		}
-
-// 		// Set username in context
-// 		c.Set("login", claims.Login)
-
-// 		c.Next()
-// 	}
-// }
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -87,8 +44,8 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		// Сохранение имени пользователя в контексте запроса
-		c.Set("login", claims.Login)
-
+		c.Set("auth_login", claims.AuthLogin)
+		c.Set("auth_role", claims.AuthRole)
 		c.Next()
 	}
 }

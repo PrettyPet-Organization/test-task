@@ -106,9 +106,14 @@ const docTemplate = `{
         },
         "/user/{user_id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Return user with \"id\" number.",
                 "tags": [
-                    "user"
+                    "Auth"
                 ],
                 "summary": "Get user by user id.",
                 "parameters": [
