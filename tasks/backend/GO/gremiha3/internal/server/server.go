@@ -36,8 +36,8 @@ func NewServer() *Server {
 		panic(err)
 	}
 
-	var repoWR store.IUserRepository
-	var repoRO store.IUserRepository
+	var repoWR store.IRepository
+	var repoRO store.IRepository
 
 	// Выбор репозитория
 	switch config.Cfg.RepoType {
@@ -46,15 +46,15 @@ func NewServer() *Server {
 		if err != nil {
 			logger.Fatal("Unable to connect to database master", zap.Error(err))
 		}
-		repoWR = pgstore.NewUserRepository(poolWR, logger)
+		repoWR = pgstore.NewRepository(poolWR, logger)
 
 		poolRO, err := pgxpool.Connect(context.Background(), config.Cfg.StorageRO)
 		if err != nil {
 			logger.Fatal("Unable to connect to database replica", zap.Error(err))
 		}
-		repoRO = pgstore.NewUserRepository(poolRO, logger)
+		repoRO = pgstore.NewRepository(poolRO, logger)
 	case "inmemory":
-		repoWR = inmemory.NewUserRepository(logger)
+		repoWR = inmemory.NewRepository(logger)
 		repoRO = repoWR
 	default:
 		logger.Fatal("Invalid repository type")
@@ -81,15 +81,21 @@ func NewServer() *Server {
 	}))
 	// Инициализация обработчиков
 	userHandler := handlers.NewUserHandler(logger, repoWR, repoRO)
+	productHandler := handlers.NewProductHandler(logger, repoWR, repoRO)
+	providerHandler := handlers.NewProviderHandler(logger, repoWR, repoRO)
 
 	// add swagger
 	server.router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Открытые маршруты
-	openRouter := server.router.Group("/user")
+	openRouter := server.router.Group("/")
 
-	openRouter.POST("/register", userHandler.CreateUser)
-	openRouter.POST("/login", userHandler.LoginUser)
+	openRouter.POST("/user/register", userHandler.CreateUser)
+	openRouter.POST("/user/login", userHandler.LoginUser)
+	openRouter.GET("/products", productHandler.GetProducts)
+	openRouter.GET("/product/:id", productHandler.GetProduct)
+	openRouter.GET("/providers", providerHandler.GetProviders)
+	openRouter.GET("/provider/:id", providerHandler.GetProvider)
 
 	// Закрытые маршруты
 	authorized := server.router.Group("/")
@@ -97,26 +103,12 @@ func NewServer() *Server {
 
 	// Маршруты для super
 	authorized.GET("/users", userHandler.GetUsers)
+	authorized.POST("/product", productHandler.CreateProduct)
+	authorized.POST("/provider", providerHandler.CreateProvider)
 
 	// Маршруты для regular
 	authorized.GET("/user/:id", userHandler.GetUser)
-	// authorized.GET("/user/:id", userHandler.GetUser)
-	// openRouter.GET("/:id", orderHandler.GetOrderByID)
-	// openRouter.GET("/list", orderHandler.GetAllOrdersList)
-	// openRouter.GET("/bypatient/:patient_id/:is_active", orderHandler.GetOrdersByPatientID)
-	// openRouter.PUT("/:id", orderHandler.UpdateOrder)
-	// openRouter.PATCH("/addservices", orderHandler.AddServicesToOrder)
-	// openRouter.DELETE("/:id", orderHandler.DeleteOrder)
 
-	// CRUD маршруты для Orders
-	// baseRouter := server.router.Group("/orders")
-	// baseRouter.POST("", orderHandler.CreateOrder)
-	// baseRouter.GET("/:id", orderHandler.GetOrderByID)
-	// baseRouter.GET("/list", orderHandler.GetAllOrdersList)
-	// baseRouter.GET("/bypatient/:patient_id/:is_active", orderHandler.GetOrdersByPatientID)
-	// baseRouter.PUT("/:id", orderHandler.UpdateOrder)
-	// baseRouter.PATCH("/addservices", orderHandler.AddServicesToOrder)
-	// baseRouter.DELETE("/:id", orderHandler.DeleteOrder)
 	return server
 }
 

@@ -16,12 +16,12 @@ import (
 // UserHandler is ...
 type UserHandler struct {
 	logger *zap.Logger
-	repoWR store.IUserRepository
-	repoRO store.IUserRepository
+	repoWR store.IRepository
+	repoRO store.IRepository
 }
 
 // NewUserHandler is ...
-func NewUserHandler(logger *zap.Logger, repoWR store.IUserRepository, repoRO store.IUserRepository) *UserHandler {
+func NewUserHandler(logger *zap.Logger, repoWR store.IRepository, repoRO store.IRepository) *UserHandler {
 	return &UserHandler{
 		logger: logger,
 		repoWR: repoWR,
@@ -69,7 +69,7 @@ func (u *UserHandler) CreateUser(c *gin.Context) {
 	}
 
 	// Сохраняем пользователя в базе с проверкой на уникальность email
-	id, err := u.repoWR.Create(context.TODO(), user)
+	id, err := u.repoWR.CreateUser(context.TODO(), user)
 	if err != nil {
 		u.logger.Error("Error creating user", zap.Error(err))
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -77,7 +77,7 @@ func (u *UserHandler) CreateUser(c *gin.Context) {
 	}
 
 	// загружаем из базы информацию о сохраненном пользователе:
-	user, err = u.repoRO.GetByID(context.TODO(), id)
+	user, err = u.repoRO.GetUserByID(context.TODO(), id)
 	if err != nil {
 		u.logger.Error("Error load user from db after saving", zap.Error(err))
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -103,7 +103,7 @@ func (u *UserHandler) GetUser(c *gin.Context) {
 
 	// если запрос делает суперпользователь, то ему можно всё
 	if authRole == "super" {
-		user, err := u.repoRO.GetByID(context.TODO(), id)
+		user, err := u.repoRO.GetUserByID(context.TODO(), id)
 		if err != nil {
 			u.logger.Error("Error getting user", zap.Error(err))
 			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
@@ -111,13 +111,58 @@ func (u *UserHandler) GetUser(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, user)
 	} else if authRole == "regular" { // если запрос делает обычный пользователь, то ему можно смотреть только собственные данные
-		user, err := u.repoRO.GetByLogin(context.TODO(), authLogin)
+		user, err := u.repoRO.GetUserByLogin(context.TODO(), authLogin)
 		if err != nil {
 			u.logger.Error("Error getting user", zap.Error(err))
 			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 			return
 		}
 		if user.ID != id {
+			u.logger.Error("не хватает уровня доступа")
+			c.JSON(http.StatusNotFound, gin.H{"error": "не хватает уровня доступа"})
+			return
+
+		}
+		c.JSON(http.StatusOK, user)
+	} else {
+		u.logger.Error("Error level role", zap.String("level error", "role not super and not regular"))
+		c.JSON(http.StatusNotFound, gin.H{"level error": "role not super and not regular"})
+	}
+
+}
+
+// GetUserByLogin is ...
+// GetUserTags 		godoc
+// @Summary			Get user by login.
+// @Description		Return user with "login" value.
+// @Param			login path string true "Login"
+// @Tags			Auth
+// @Security     	BearerAuth
+// @Success			200 {object} model.User
+// @failure			404 {string} err.Error()
+// @Router			/user/{login} [get]
+func (u *UserHandler) GetUserByLogin(c *gin.Context) {
+	login := c.Param("login")
+	authLogin, authRole := utils.GetLevel(c)
+	u.logger.Debug("принятые логин и роль из токена", zap.String("login", authLogin), zap.String("role", authRole))
+
+	// если запрос делает суперпользователь, то ему можно всё
+	if authRole == "super" {
+		user, err := u.repoRO.GetUserByLogin(context.TODO(), login)
+		if err != nil {
+			u.logger.Error("Error getting user", zap.Error(err))
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+		c.JSON(http.StatusOK, user)
+	} else if authRole == "regular" { // если запрос делает обычный пользователь, то ему можно смотреть только собственные данные
+		user, err := u.repoRO.GetUserByLogin(context.TODO(), authLogin)
+		if err != nil {
+			u.logger.Error("Error getting user", zap.Error(err))
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+		if user.Login != login {
 			u.logger.Error("не хватает уровня доступа")
 			c.JSON(http.StatusNotFound, gin.H{"error": "не хватает уровня доступа"})
 			return
@@ -152,7 +197,7 @@ func (u *UserHandler) LoginUser(c *gin.Context) {
 	}
 
 	// Find login in DB
-	user, err := u.repoRO.GetByLogin(context.TODO(), loginUser.Login)
+	user, err := u.repoRO.GetUserByLogin(context.TODO(), loginUser.Login)
 	if err != nil {
 		u.logger.Error("Error. User not find", zap.Error(err))
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -200,7 +245,7 @@ func (u *UserHandler) GetUsers(c *gin.Context) {
 
 	// если запрос делает суперпользователь, то ему можно всё
 	if authRole == "super" {
-		users, err := u.repoRO.GetAll(context.TODO())
+		users, err := u.repoRO.GetAllUsers(context.TODO())
 		if err != nil {
 			u.logger.Error("Error getting users", zap.Error(err))
 			c.JSON(http.StatusNotFound, gin.H{"error": "Users not found"})

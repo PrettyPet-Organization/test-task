@@ -13,6 +13,14 @@ type Product struct {
 	Stock      int     `json:"stock" db:"stock"`
 }
 
+// AddProduct is ...
+type AddProduct struct {
+	Name       string  `json:"name" db:"name" example:"яблоки"`
+	ProviderID int     `json:"provider_id" db:"provider_id" example:"1"`
+	Price      float64 `json:"price" db:"price" example:"132.12"`
+	Stock      int     `json:"stock" db:"stock" example:"500"`
+}
+
 // NewProduct is ...
 func NewProduct() Product {
 	return Product{}
