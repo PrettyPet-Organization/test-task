@@ -14,12 +14,12 @@ import (
 // UserHandler is ...
 type ProductHandler struct {
 	logger *zap.Logger
-	repoWR store.IRepository
-	repoRO store.IRepository
+	repoWR store.IProductRepository
+	repoRO store.IProductRepository
 }
 
 // NewProductHandler is ...
-func NewProductHandler(logger *zap.Logger, repoWR store.IRepository, repoRO store.IRepository) *ProductHandler {
+func NewProductHandler(logger *zap.Logger, repoWR store.IProductRepository, repoRO store.IProductRepository) *ProductHandler {
 	return &ProductHandler{
 		logger: logger,
 		repoWR: repoWR,
@@ -29,11 +29,11 @@ func NewProductHandler(logger *zap.Logger, repoWR store.IRepository, repoRO stor
 
 // CreateProduct is ...
 // CreateProductTags		godoc
-// @Summary				Register user
+// @Summary				Добавить товар.
 // @Description			Save register data of user in Repo.
 // @Param				product body model.AddProduct true "Create product"
 // @Produce				application/json
-// @Tags				product
+// @Tags				Product
 // @Security     	BearerAuth
 // @Success				200 {object} model.Product
 // @failure				400 {string} err.Error()
@@ -81,10 +81,10 @@ func (ph *ProductHandler) CreateProduct(c *gin.Context) {
 
 // GetProduct is ...
 // GetProductTags 		godoc
-// @Summary			Get product by product id.
+// @Summary			Посмотреть товар по его id.
 // @Description		Return product with "id" number.
 // @Param			product_id path int true "Product ID"
-// @Tags			product
+// @Tags			Product
 // @Success			200 {object} model.Product
 // @failure			404 {string} err.Error()
 // @Router			/product/{product_id} [get]
@@ -102,9 +102,9 @@ func (ph *ProductHandler) GetProduct(c *gin.Context) {
 
 // GetProducts is ...
 // GetProductsTags 		godoc
-// @Summary			Get all products.
+// @Summary			Получить список всех товаров.
 // @Description		Return products list.
-// @Tags			product
+// @Tags			Product
 // @Produce      json
 // @Success			200 {object} []model.Product
 // @failure			404 {string} err.Error()

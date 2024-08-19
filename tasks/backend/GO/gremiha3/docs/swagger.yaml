@@ -1,4 +1,28 @@
 definitions:
+  model.AddProduct:
+    properties:
+      name:
+        example: яблоки
+        type: string
+      price:
+        example: 132.12
+        type: number
+      provider_id:
+        example: 1
+        type: integer
+      stock:
+        example: 500
+        type: integer
+    type: object
+  model.AddProvider:
+    properties:
+      name:
+        example: Microsoft
+        type: string
+      origin:
+        example: Kazakhstan
+        type: string
+    type: object
   model.AddUser:
     properties:
       login:
@@ -20,6 +44,28 @@ definitions:
         example: "123456"
         type: string
     type: object
+  model.Product:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      provider_id:
+        type: integer
+      stock:
+        type: integer
+    type: object
+  model.Provider:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      origin:
+        type: string
+    type: object
   model.User:
     properties:
       id:
@@ -39,6 +85,146 @@ info:
   title: Shop Service API
   version: "1.0"
 paths:
+  /product:
+    post:
+      description: Save register data of user in Repo.
+      parameters:
+      - description: Create product
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/model.AddProduct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Product'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Добавить товар.
+      tags:
+      - Product
+  /product/{product_id}:
+    get:
+      description: Return product with "id" number.
+      parameters:
+      - description: Product ID
+        in: path
+        name: product_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Product'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Посмотреть товар по его id.
+      tags:
+      - Product
+  /products:
+    get:
+      description: Return products list.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Product'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Получить список всех товаров.
+      tags:
+      - Product
+  /provider:
+    post:
+      description: Save register data of user in Repo.
+      parameters:
+      - description: Create Provider
+        in: body
+        name: Provider
+        required: true
+        schema:
+          $ref: '#/definitions/model.AddProvider'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Provider'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Добавить поставщика.
+      tags:
+      - Provider
+  /provider/{provider_id}:
+    get:
+      description: Return Provider with "id" number.
+      parameters:
+      - description: Provider ID
+        in: path
+        name: provider_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Provider'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Посмотреть постащика по его id.
+      tags:
+      - Provider
+  /providers:
+    get:
+      description: Return Providers list.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Provider'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Получить список всех поставщиков.
+      tags:
+      - Provider
   /user/{user_id}:
     get:
       description: Return user with "id" number.
@@ -59,9 +245,9 @@ paths:
             type: string
       security:
       - BearerAuth: []
-      summary: Get user by user id.
+      summary: Посмотреть пользователя по его id.
       tags:
-      - Auth
+      - User
   /user/login:
     post:
       consumes:
@@ -90,9 +276,32 @@ paths:
           description: Internal Server Error
           schema:
             type: string
-      summary: Login user by login=email/password.
+      summary: Авторизоваться по логину и паролю.
       tags:
       - Auth
+  /user/login/{login}:
+    get:
+      description: Return user with "login" value.
+      parameters:
+      - description: Login
+        in: path
+        name: login
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Посмотреть пользователя по его логину.
+      tags:
+      - User
   /user/register:
     post:
       description: Save register data of user in Repo.
@@ -111,6 +320,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/model.User'
+        "201":
+          description: Пользователь успешно зарегистрирован.
+          schema:
+            type: string
         "400":
           description: Bad Request
           schema:
@@ -119,9 +332,9 @@ paths:
           description: Internal Server Error
           schema:
             type: string
-      summary: Register user
+      summary: Добавить пользователя.
       tags:
-      - user
+      - Auth
   /users:
     get:
       description: Return users list.
@@ -140,9 +353,9 @@ paths:
             type: string
       security:
       - BearerAuth: []
-      summary: Get all users.
+      summary: Получить список всех пользователей.
       tags:
-      - user
+      - User
 securityDefinitions:
   BearerAuth:
     in: header

@@ -16,12 +16,12 @@ import (
 // UserHandler is ...
 type UserHandler struct {
 	logger *zap.Logger
-	repoWR store.IRepository
-	repoRO store.IRepository
+	repoWR store.IUserRepository
+	repoRO store.IUserRepository
 }
 
 // NewUserHandler is ...
-func NewUserHandler(logger *zap.Logger, repoWR store.IRepository, repoRO store.IRepository) *UserHandler {
+func NewUserHandler(logger *zap.Logger, repoWR store.IUserRepository, repoRO store.IUserRepository) *UserHandler {
 	return &UserHandler{
 		logger: logger,
 		repoWR: repoWR,
@@ -31,12 +31,13 @@ func NewUserHandler(logger *zap.Logger, repoWR store.IRepository, repoRO store.I
 
 // CreateUser is ...
 // CreateUserTags		godoc
-// @Summary				Register user
+// @Summary				Добавить пользователя.
 // @Description			Save register data of user in Repo.
 // @Param				user body model.AddUser true "Create user. Логин указывается в формате электронной почты. Пароль не меньше 6 символов. Роль: super или regular"
 // @Produce				application/json
-// @Tags				user
+// @Tags				Auth
 // @Success				200 {object} model.User
+// @Success				201 {string} string "Пользователь успешно зарегистрирован."
 // @failure				400 {string} err.Error()
 // @failure				500 {string} err.Error()
 // @Router				/user/register [post]
@@ -75,23 +76,16 @@ func (u *UserHandler) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	// загружаем из базы информацию о сохраненном пользователе:
-	user, err = u.repoRO.GetUserByID(context.TODO(), id)
-	if err != nil {
-		u.logger.Error("Error load user from db after saving", zap.Error(err))
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	user.ID = id
 	c.JSON(http.StatusCreated, user)
 }
 
 // GetUser is ...
 // GetUserTags 		godoc
-// @Summary			Get user by user id.
+// @Summary			Посмотреть пользователя по его id.
 // @Description		Return user with "id" number.
 // @Param			user_id path int true "User ID"
-// @Tags			Auth
+// @Tags			User
 // @Security     	BearerAuth
 // @Success			200 {object} model.User
 // @failure			404 {string} err.Error()
@@ -133,14 +127,14 @@ func (u *UserHandler) GetUser(c *gin.Context) {
 
 // GetUserByLogin is ...
 // GetUserTags 		godoc
-// @Summary			Get user by login.
+// @Summary			Посмотреть пользователя по его логину.
 // @Description		Return user with "login" value.
 // @Param			login path string true "Login"
-// @Tags			Auth
+// @Tags			User
 // @Security     	BearerAuth
 // @Success			200 {object} model.User
 // @failure			404 {string} err.Error()
-// @Router			/user/{login} [get]
+// @Router			/user/login/{login} [get]
 func (u *UserHandler) GetUserByLogin(c *gin.Context) {
 	login := c.Param("login")
 	authLogin, authRole := utils.GetLevel(c)
@@ -178,7 +172,7 @@ func (u *UserHandler) GetUserByLogin(c *gin.Context) {
 
 // LoginUser is ...
 // LoginUserTags 		godoc
-// @Summary				Login user by login=email/password.
+// @Summary				Авторизоваться по логину и паролю.
 // @Description			Returns the authorization status
 // @Param				user body model.LoginUser true "Login user. Логин указывается в формате электронной почты. Пароль не меньше 6 символов. Роль: super или regular"
 // @Accept       		json
@@ -218,22 +212,15 @@ func (u *UserHandler) LoginUser(c *gin.Context) {
 		u.logger.Error("Error. Could not create token", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create token"})
 	}
-	// // Set cookie
-	// http.SetCookie(c.Writer, &http.Cookie{
-	// 	Name:     "token",
-	// 	Value:    tokenString,
-	// 	Expires:  expirationTime,
-	// 	HttpOnly: true,
-	// })
 
 	c.JSON(http.StatusOK, gin.H{"message": "Logged in", "token": tokenString})
 }
 
 // GetUsers is ...
 // GetUsersTags 		godoc
-// @Summary			Get all users.
+// @Summary			Получить список всех пользователей.
 // @Description		Return users list.
-// @Tags			user
+// @Tags			User
 // @Security     	BearerAuth
 // @Produce      json
 // @Success			200 {object} []model.User

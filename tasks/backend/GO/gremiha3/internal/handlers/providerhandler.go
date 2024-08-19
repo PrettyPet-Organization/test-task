@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/KozlovNikolai/test-task/internal/model"
+	"github.com/KozlovNikolai/test-task/internal/pkg/utils"
 	"github.com/KozlovNikolai/test-task/internal/store"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -14,12 +15,12 @@ import (
 // ProviderHandler is ...
 type ProviderHandler struct {
 	logger *zap.Logger
-	repoWR store.IRepository
-	repoRO store.IRepository
+	repoWR store.IProviderRepository
+	repoRO store.IProviderRepository
 }
 
 // NewProviderHandler is ...
-func NewProviderHandler(logger *zap.Logger, repoWR store.IRepository, repoRO store.IRepository) *ProviderHandler {
+func NewProviderHandler(logger *zap.Logger, repoWR store.IProviderRepository, repoRO store.IProviderRepository) *ProviderHandler {
 	return &ProviderHandler{
 		logger: logger,
 		repoWR: repoWR,
@@ -29,7 +30,7 @@ func NewProviderHandler(logger *zap.Logger, repoWR store.IRepository, repoRO sto
 
 // CreateProvider is ...
 // CreateProviderTags		godoc
-// @Summary				Register user
+// @Summary				Добавить поставщика.
 // @Description			Save register data of user in Repo.
 // @Param				Provider body model.AddProvider true "Create Provider"
 // @Produce				application/json
@@ -38,8 +39,18 @@ func NewProviderHandler(logger *zap.Logger, repoWR store.IRepository, repoRO sto
 // @Success				200 {object} model.Provider
 // @failure				400 {string} err.Error()
 // @failure				500 {string} err.Error()
-// @Router				/Provider [post]
+// @Router				/provider [post]
 func (ph *ProviderHandler) CreateProvider(c *gin.Context) {
+
+	authLogin, authRole := utils.GetLevel(c)
+	ph.logger.Debug("принятые логин и роль из токена", zap.String("login", authLogin), zap.String("role", authRole))
+
+	// если запрос делает не суперпользователь, то выходим с ошибкой
+	if authRole != "super" {
+		ph.logger.Error("не хватает уровня доступа")
+		c.JSON(http.StatusNotFound, gin.H{"error": "не хватает уровня доступа"})
+		return
+	}
 	var addProvider model.AddProvider
 	// Заполняем структуру addProvider данными из запроса
 	if err := c.ShouldBindJSON(&addProvider); err != nil {
@@ -65,20 +76,13 @@ func (ph *ProviderHandler) CreateProvider(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	// загружаем из базы информацию о сохраненном поставщике:
-	Provider, err = ph.repoRO.GetProviderByID(context.TODO(), id)
-	if err != nil {
-		ph.logger.Error("Error load Provider from db after saving", zap.Error(err))
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	Provider.ID = id
 	c.JSON(http.StatusCreated, Provider)
 }
 
 // GetProvider is ...
 // GetProviderTags 		godoc
-// @Summary			Get Provider by Provider id.
+// @Summary			Посмотреть постащика по его id.
 // @Description		Return Provider with "id" number.
 // @Param			provider_id path int true "Provider ID"
 // @Tags			Provider
@@ -99,7 +103,7 @@ func (ph *ProviderHandler) GetProvider(c *gin.Context) {
 
 // GetProviders is ...
 // GetProvidersTags 		godoc
-// @Summary			Get all Providers.
+// @Summary			Получить список всех поставщиков.
 // @Description		Return Providers list.
 // @Tags			Provider
 // @Produce      json

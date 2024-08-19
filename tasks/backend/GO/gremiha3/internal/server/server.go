@@ -108,6 +108,7 @@ func NewServer() *Server {
 
 	// Маршруты для regular
 	authorized.GET("/user/:id", userHandler.GetUser)
+	authorized.GET("/user/login/:login", userHandler.GetUserByLogin)
 
 	return server
 }
