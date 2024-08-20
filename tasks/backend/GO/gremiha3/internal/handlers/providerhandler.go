@@ -42,13 +42,12 @@ func NewProviderHandler(logger *zap.Logger, repoWR store.IProviderRepository, re
 // @Router				/provider [post]
 func (ph *ProviderHandler) CreateProvider(c *gin.Context) {
 
-	authLogin, authRole := utils.GetLevel(c)
-	ph.logger.Debug("принятые логин и роль из токена", zap.String("login", authLogin), zap.String("role", authRole))
-
+	authID, authLogin, authRole := utils.GetLevel(c)
+	ph.logger.Debug("принятые логин и роль из токена", zap.Int("id", authID), zap.String("login", authLogin), zap.String("role", authRole))
 	// если запрос делает не суперпользователь, то выходим с ошибкой
 	if authRole != "super" {
-		ph.logger.Error("не хватает уровня доступа")
-		c.JSON(http.StatusNotFound, gin.H{"error": "не хватает уровня доступа"})
+		ph.logger.Error("forbidden access level.")
+		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden access level."})
 		return
 	}
 	var addProvider model.AddProvider

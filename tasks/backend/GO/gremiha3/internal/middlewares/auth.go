@@ -10,6 +10,7 @@ import (
 
 // Claims is ...
 type Claims struct {
+	AuthID    int    `json:"auth_id"`
 	AuthLogin string `json:"auth_login"`
 	AuthRole  string `json:"auth_role"`
 	jwt.RegisteredClaims
@@ -44,6 +45,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		// Сохранение имени пользователя в контексте запроса
+		c.Set("auth_id", claims.AuthID)
 		c.Set("auth_login", claims.AuthLogin)
 		c.Set("auth_role", claims.AuthRole)
 		c.Next()

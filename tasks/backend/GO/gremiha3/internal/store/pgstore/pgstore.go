@@ -1,8 +1,6 @@
 package pgstore
 
 import (
-	"context"
-
 	"github.com/jackc/pgx/v4/pgxpool"
 	"go.uber.org/zap"
 )
@@ -11,11 +9,6 @@ import (
 type Repository struct {
 	logger *zap.Logger
 	db     *pgxpool.Pool
-}
-
-// UpdateUser implements store.IRepository.
-func (repo *Repository) UpdateUser(context.Context, int) error {
-	panic("unimplemented")
 }
 
 // NewRepository is ...

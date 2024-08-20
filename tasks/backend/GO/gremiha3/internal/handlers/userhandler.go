@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -91,12 +92,12 @@ func (u *UserHandler) CreateUser(c *gin.Context) {
 // @failure			404 {string} err.Error()
 // @Router			/user/{user_id} [get]
 func (u *UserHandler) GetUser(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	authLogin, authRole := utils.GetLevel(c)
-	u.logger.Debug("принятые логин и роль из токена", zap.String("login", authLogin), zap.String("role", authRole))
+	authID, authLogin, authRole := utils.GetLevel(c)
+	u.logger.Debug("принятые логин и роль из токена", zap.Int("id", authID), zap.String("login", authLogin), zap.String("role", authRole))
 
 	// если запрос делает суперпользователь, то ему можно всё
 	if authRole == "super" {
+		id, _ := strconv.Atoi(c.Param("id"))
 		user, err := u.repoRO.GetUserByID(context.TODO(), id)
 		if err != nil {
 			u.logger.Error("Error getting user", zap.Error(err))
@@ -105,24 +106,21 @@ func (u *UserHandler) GetUser(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, user)
 	} else if authRole == "regular" { // если запрос делает обычный пользователь, то ему можно смотреть только собственные данные
-		user, err := u.repoRO.GetUserByLogin(context.TODO(), authLogin)
+		id, _ := strconv.Atoi(c.Param("id"))
+		user, err := u.repoRO.GetUserByID(context.TODO(), authID)
 		if err != nil {
 			u.logger.Error("Error getting user", zap.Error(err))
 			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 			return
 		}
 		if user.ID != id {
-			u.logger.Error("не хватает уровня доступа")
-			c.JSON(http.StatusNotFound, gin.H{"error": "не хватает уровня доступа"})
+			u.logger.Error("forbidden access level.")
+			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden access level."})
 			return
 
 		}
 		c.JSON(http.StatusOK, user)
-	} else {
-		u.logger.Error("Error level role", zap.String("level error", "role not super and not regular"))
-		c.JSON(http.StatusNotFound, gin.H{"level error": "role not super and not regular"})
 	}
-
 }
 
 // GetUserByLogin is ...
@@ -137,8 +135,8 @@ func (u *UserHandler) GetUser(c *gin.Context) {
 // @Router			/user/login/{login} [get]
 func (u *UserHandler) GetUserByLogin(c *gin.Context) {
 	login := c.Param("login")
-	authLogin, authRole := utils.GetLevel(c)
-	u.logger.Debug("принятые логин и роль из токена", zap.String("login", authLogin), zap.String("role", authRole))
+	authID, authLogin, authRole := utils.GetLevel(c)
+	u.logger.Debug("принятые логин и роль из токена", zap.Int("id", authID), zap.String("login", authLogin), zap.String("role", authRole))
 
 	// если запрос делает суперпользователь, то ему можно всё
 	if authRole == "super" {
@@ -157,17 +155,13 @@ func (u *UserHandler) GetUserByLogin(c *gin.Context) {
 			return
 		}
 		if user.Login != login {
-			u.logger.Error("не хватает уровня доступа")
-			c.JSON(http.StatusNotFound, gin.H{"error": "не хватает уровня доступа"})
+			u.logger.Error("forbidden access level.")
+			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden access level."})
 			return
 
 		}
 		c.JSON(http.StatusOK, user)
-	} else {
-		u.logger.Error("Error level role", zap.String("level error", "role not super and not regular"))
-		c.JSON(http.StatusNotFound, gin.H{"level error": "role not super and not regular"})
 	}
-
 }
 
 // LoginUser is ...
@@ -207,13 +201,13 @@ func (u *UserHandler) LoginUser(c *gin.Context) {
 	}
 	// Create JWT token
 	// expirationTime := time.Now().Add(config.Cfg.TokenTimeDuration)
-	tokenString, err := utils.GenerateJWT(user.Login, user.Role)
+	tokenString, err := utils.GenerateJWT(user.ID, user.Login, user.Role)
 	if err != nil {
 		u.logger.Error("Error. Could not create token", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create token"})
 	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Logged in", "token": tokenString})
+	msg := fmt.Sprintf("Logged in with id: %d, login: %s, role: %s", user.ID, user.Login, user.Role)
+	c.JSON(http.StatusOK, gin.H{"message": msg, "token": tokenString})
 }
 
 // GetUsers is ...
@@ -227,9 +221,8 @@ func (u *UserHandler) LoginUser(c *gin.Context) {
 // @failure			404 {string} err.Error()
 // @Router			/users [get]
 func (u *UserHandler) GetUsers(c *gin.Context) {
-	authLogin, authRole := utils.GetLevel(c)
-	u.logger.Debug("принятые логин и роль из токена", zap.String("login", authLogin), zap.String("role", authRole))
-
+	authID, authLogin, authRole := utils.GetLevel(c)
+	u.logger.Debug("принятые логин и роль из токена", zap.Int("id", authID), zap.String("login", authLogin), zap.String("role", authRole))
 	// если запрос делает суперпользователь, то ему можно всё
 	if authRole == "super" {
 		users, err := u.repoRO.GetAllUsers(context.TODO())
@@ -241,7 +234,7 @@ func (u *UserHandler) GetUsers(c *gin.Context) {
 		c.JSON(http.StatusOK, users)
 		return
 	}
-	u.logger.Error("не хватает уровня доступа")
-	c.JSON(http.StatusNotFound, gin.H{"error": "не хватает уровня доступа"})
+	u.logger.Error("forbidden access level.")
+	c.JSON(http.StatusForbidden, gin.H{"error": "forbidden access level."})
 
 }

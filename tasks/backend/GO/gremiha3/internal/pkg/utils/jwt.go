@@ -9,14 +9,16 @@ import (
 
 // Claims is ...
 type Claims struct {
+	AuthID    int    `json:"auth_id"`
 	AuthLogin string `json:"auth_login"`
 	AuthRole  string `json:"auth_role"`
 	jwt.RegisteredClaims
 }
 
 // GenerateJWT is ...
-func GenerateJWT(login, role string) (string, error) {
+func GenerateJWT(id int, login, role string) (string, error) {
 	claims := jwt.MapClaims{
+		"auth_id":    id,
 		"auth_login": login,
 		"auth_role":  role,
 		"exp":        time.Now().Add(config.Cfg.TokenTimeDuration).Unix(),

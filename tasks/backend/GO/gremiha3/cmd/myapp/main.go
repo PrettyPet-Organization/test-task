@@ -15,7 +15,6 @@ import (
 // @host 	localhost:8443
 // @BasePath /
 func main() {
-	//cfg := config.MustLoad()
 	config.MustLoad()
 	server := server.NewServer()
 

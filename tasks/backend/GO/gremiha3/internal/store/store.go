@@ -11,6 +11,7 @@ type IRepository interface {
 	IOrderRepository
 	IProductRepository
 	IProviderRepository
+	IOrderStateRepository
 }
 
 // IUserRepository is ...
@@ -48,4 +49,14 @@ type IOrderRepository interface {
 	GetOrderByID(context.Context, int) (model.Order, error)
 	UpdateOrder(context.Context, int) error
 	DeleteOrder(context.Context, int) error
+}
+
+// IOrderStateRepository is ...
+type IOrderStateRepository interface {
+	CreateOrderState(context.Context, model.OrderState) (int, error)
+	GetAllOrderStates(ctx context.Context) ([]model.OrderState, error)
+	GetOrderStateByID(context.Context, int) (model.OrderState, error)
+	UpdateOrderState(context.Context, int) error
+	DeleteOrderState(context.Context, int) error
+	GetOrderStateByName(context.Context, string) (int, error)
 }

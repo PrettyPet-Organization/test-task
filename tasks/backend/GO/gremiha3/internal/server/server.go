@@ -83,6 +83,8 @@ func NewServer() *Server {
 	userHandler := handlers.NewUserHandler(logger, repoWR, repoRO)
 	productHandler := handlers.NewProductHandler(logger, repoWR, repoRO)
 	providerHandler := handlers.NewProviderHandler(logger, repoWR, repoRO)
+	orderHandler := handlers.NewOrderHandler(logger, repoWR, repoRO)
+	orderStateHandler := handlers.NewOrderStateHandler(logger, repoWR, repoRO)
 
 	// add swagger
 	server.router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -102,13 +104,22 @@ func NewServer() *Server {
 	authorized.Use(middlewares.AuthMiddleware())
 
 	// Маршруты для super
+	// USER
 	authorized.GET("/users", userHandler.GetUsers)
-	authorized.POST("/product", productHandler.CreateProduct)
-	authorized.POST("/provider", providerHandler.CreateProvider)
-
-	// Маршруты для regular
 	authorized.GET("/user/:id", userHandler.GetUser)
 	authorized.GET("/user/login/:login", userHandler.GetUserByLogin)
+	// PRODUCT
+	authorized.POST("/product", productHandler.CreateProduct)
+	// PROVIDER
+	authorized.POST("/provider", providerHandler.CreateProvider)
+	// ORDERSTATE
+	authorized.POST("/orderstate", orderStateHandler.CreateOrderState)
+	authorized.GET("/orderstate/:id", orderStateHandler.GetOrderState)
+	authorized.GET("/orderstates", orderStateHandler.GetOrderStates)
+	// ORDER
+	authorized.POST("/order", orderHandler.CreateOrder)
+	authorized.GET("/order/:id", orderHandler.GetOrder)
+	authorized.GET("/orders", orderHandler.GetOrders)
 
 	return server
 }

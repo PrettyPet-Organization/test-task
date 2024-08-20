@@ -14,6 +14,11 @@ type Order struct {
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`
 }
 
+// Order is ...
+type AddOrder struct {
+	UserID int `json:"user_id" db:"user_id" example:"1"`
+}
+
 // Item is ...
 type Item struct {
 	ID         int     `json:"id" db:"id"`
@@ -22,30 +27,7 @@ type Item struct {
 	TotalPrice float64 `json:"total_price" db:"total_price"`
 }
 
-// OrderState is ...
-type OrderState struct {
-	ID   int    `json:"id" db:"id"`
-	Name string `json:"name" db:"name"`
-}
-
 // NewOrder is ...
 func NewOrder() Order {
 	return Order{}
 }
-
-// // Validate проверяет правильность данных поставщика
-// func (u *Order) Validate() error {
-// 	if u.Name == "" {
-// 		return errors.New("name is required")
-// 	}
-// 	if u.ProviderID == 0 {
-// 		return errors.New("provider is required")
-// 	}
-// 	if u.Price < 0 {
-// 		return errors.New("price must be positive or null")
-// 	}
-// 	if u.Quantity < 0 {
-// 		return errors.New("quantity must be positive or null")
-// 	}
-// 	return nil
-// }
